@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para el amor de mi vida</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: url("Fondo1.jpg") no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            background-attachment: fixed;
+        }
+
+        .gallery {
+            position: relative;
+            z-index: 10; 
+            width: 100%;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+            padding: 10px;
+        }
+
+        .gallery img {
+            width: 95%;
+            height: auto;
+            cursor: pointer;
+            border: 5px solid #fa65f2;
+            border-radius: 10px;
+            transition: transform 0.25s;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 20;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 80%;
+            max-width: 400px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); 
+        }
+
+        .close {
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+            float: right;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .play-button {
+            z-index: 20;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .play-button:hover {
+            background-color: #555;
+        }
+
+        /* Animación con letras M y J */
+        .falling-letter {
+            position: absolute;
+            font-size: 30px;
+            font-weight: bold;
+            color: rgb(0, 0, 0);
+            animation: fall 5s linear infinite;
+            user-select: none;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px);
+            }
+            100% {
+                transform: translateY(110vh);
+            }
+        }
+
+    </style>
+    <script>
+        let audio;
+        let isPlaying = false;
+        let holdTimeout;
+
+        window.onload = function () {
+            audio = new Audio("Trevor Daniel - Falling (Official Music Video).mp3");
+
+            // Crear las letras M y J al cargar la página
+            for (let i = 0; i < 75; i++) {
+                createFallingLetter();
+            }
+
+            // Asegurarse de que el modal esté oculto al cargar la página
+            document.getElementById('myModal').style.display = 'none';
+        };
+
+        function createFallingLetter() {
+            const letter = document.createElement('div');
+            letter.classList.add('falling-letter');
+
+            // Elegir aleatoriamente entre 'M' y 'J'
+            const letters = ['M', 'J'];
+            letter.innerText = letters[Math.floor(Math.random() * letters.length)];
+
+            // Posicionar las letras aleatoriamente
+            const size = Math.random() * 20 + 30; 
+            const left = Math.random() * 100; 
+            const duration = Math.random() * 3 + 2; 
+
+            letter.style.left = `${left}vw`;
+            letter.style.fontSize = `${size}px`;
+            letter.style.animationDuration = `${duration}s`;
+
+            document.body.appendChild(letter);
+
+            // Re-crea las letras una vez que termine la animación
+            letter.addEventListener('animationend', () => {
+                letter.remove();
+                createFallingLetter(); 
+            });
+        }
+
+        function togglePlayPause() {
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                document.getElementById('playButton').innerText = "🎵 Reproducir Música";
+            } else {
+                audio.play()
+                    .then(() => {
+                        isPlaying = true;
+                        document.getElementById('playButton').innerText = "⏸️ Pausar Música";
+                    })
+                    .catch(err => console.error("Error al reproducir el audio:", err));
+            }
+        }
+
+        function restartAudio() {
+            audio.currentTime = 0;
+            audio.play()
+                .then(() => {
+                    isPlaying = true;
+                    document.getElementById('playButton').innerText = "⏸️ Pausar Música";
+                })
+                .catch(err => console.error("Error al reproducir el audio:", err));
+        }
+
+        function handleButtonHold() {
+            holdTimeout = setTimeout(() => {
+                restartAudio();
+            }, 1000);
+        }
+
+        function cancelButtonHold() {
+            clearTimeout(holdTimeout);
+        }
+
+        function showMessage(message) {
+            document.getElementById('modalMessage').innerText = message;
+            document.getElementById('myModal').style.display = 'flex'; // Solo mostrar el modal al hacer clic en una imagen
+        }
+
+        function closeModal() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+    </script>
+</head>
+<body>
+    <button 
+        id="playButton" 
+        class="play-button" 
+        onclick="togglePlayPause()" 
+        onmousedown="handleButtonHold()" 
+        onmouseup="cancelButtonHold()" 
+        onmouseleave="cancelButtonHold()">
+        🎵 Reproducir Música
+    </button>
+
+    <div class="gallery">
+        <img src="Mili1.jpg" alt="Imagen 1" onclick="showMessage('Hola mi amor')">
+        <img src="Mili2.jpg" alt="Imagen 2" onclick="showMessage('Te mando')">
+        <img src="Mili3.jpg" alt="Imagen 3" onclick="showMessage('Un beso')">
+        <img src="Mili4.jpg" alt="Imagen 4" onclick="showMessage('En la teta')">
+        <img src="Mili5.jpg" alt="Imagen 5" onclick="showMessage('Una en la derecha')">
+        <img src="Mili6.jpg" alt="Imagen 6" onclick="showMessage('Otro en la izquierda')">
+        <img src="Mili7.jpg" alt="Imagen 7" onclick="showMessage('Te mando un beso en la cola')">
+        <img src="Mili8.jpg" alt="Imagen 8" onclick="showMessage('En la cheicon')">
+        <img src="Mili9.jpg" alt="Imagen 9" onclick="showMessage('En las nalgas')">
+        <img src="Mili10.jpg" alt="Imagen 10" onclick="showMessage('Y ya no sé en dónde más mandarte un beso')">
+        <img src="Mili11.jpg" alt="Imagen 11" onclick="showMessage('Bueno, te mando un cachetazo')">
+        <img src="Mili12.jpg" alt="Imagen 12" onclick="showMessage('En la cola, obvio')">
+    </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <p id="modalMessage"></p> <!-- Mensaje que se actualizará dinámicamente -->
+        </div>
+    </div>
+</body>
+</html>
+
